@@ -25,9 +25,17 @@ public class HitServiceImpl implements HitService {
 
     public List<StatsDto> getStats(String start, String end, String[] uris, boolean unique) {
         if (unique) {
-            return hitRepository.findStatsByTimeStampBetweenAndUriInAndUniqueWhereUniqueFalse(LocalDateTime.parse(start, formatter), LocalDateTime.parse(end, formatter), List.of(uris));
+            if (List.of(uris).isEmpty()) {
+                return hitRepository.findStatsByTimeStampBetweenAndUriInAndUniqueWhereUniqueTrue(LocalDateTime.parse(start, formatter), LocalDateTime.parse(end, formatter), grayList);
+            } else {
+                return hitRepository.findStatsByTimeStampBetweenAndUriInAndUniqueWhereUniqueTrue(LocalDateTime.parse(start, formatter), LocalDateTime.parse(end, formatter), List.of(uris), grayList);
+            }
         } else {
-            return hitRepository.findStatsByTimeStampBetweenAndUriInAndUniqueWhereUniqueTrue(LocalDateTime.parse(start, formatter), LocalDateTime.parse(end, formatter), List.of(uris), grayList);
+            if (List.of(uris).isEmpty()) {
+                return hitRepository.findStatsByTimeStampBetweenAndUriInAndUniqueWhereUniqueFalse(LocalDateTime.parse(start, formatter), LocalDateTime.parse(end, formatter));
+            } else {
+                return hitRepository.findStatsByTimeStampBetweenAndUriInAndUniqueWhereUniqueFalse(LocalDateTime.parse(start, formatter), LocalDateTime.parse(end, formatter), List.of(uris));
+            }
         }
     }
 }
