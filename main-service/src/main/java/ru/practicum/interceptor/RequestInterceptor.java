@@ -1,28 +1,18 @@
 package ru.practicum.interceptor;
 
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.UriComponentsBuilder;
 import ru.practicum.HitDto;
-import ru.practicum.StatisticsClient;
+import ru.practicum.StatisticsRestClient;
 import ru.practicum.StatsDto;
 import ru.practicum.event.EventRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -31,7 +21,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class RequestInterceptor implements HandlerInterceptor {
-    private final StatisticsClient statisticsClient;
+    private final StatisticsRestClient statisticsClient;
     private final EventRepository eventRepository;
     private final RestTemplate restTemplate;
     private static final String STATISTICS_SERVICE_URL = "http://localhost:9090";
@@ -44,14 +34,7 @@ public class RequestInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        HitDto hitDto = new HitDto(
-                "ewm-main-service",
-                request.getRequestURI(),
-                request.getRemoteAddr(),
-                LocalDateTime.now().format(formatter)
-        );
-        log.info(String.valueOf(hitDto));
-        statisticsClient.create(hitDto);
+        statisticsClient.create("ewm-main-service", request.getRequestURI(), request.getRemoteAddr());
 //        HttpHeaders headers = new HttpHeaders();
 //        headers.set("Content-Type", "application/json");
 //
@@ -68,6 +51,14 @@ public class RequestInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception exception) throws Exception {
+
+        if (request.getRequestURI().startsWith("/events/")) {
+            LocalDateTime start = LocalDateTime.of(2000, 1, 1, 0, 0);
+            LocalDateTime end = LocalDateTime.of(2100, 1, 1, 0, 0);
+            List<StatsDto> statsDtoList = statisticsClient.getStats(start, end, List.of(request.getRequestURI()), true).getBody();
+            eventRepository.incrementViews(Long.parseLong(request.getRequestURI().replaceFirst("/events/", "")), statsDtoList.get(0).getHits());
+        }
+
 //        System.out.println(statisticsClient.getStats(
 //                URLEncoder.encode("2000-01-01 01:00:00", StandardCharsets.UTF_8),
 //                URLEncoder.encode("2100-01-01 01:00:00", StandardCharsets.UTF_8),

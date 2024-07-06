@@ -36,35 +36,18 @@ public class HitServiceImpl implements HitService {
     }
 
     public List<StatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Hit> cq = cb.createQuery(Hit.class);
-        Root<Hit> hit = cq.from(Hit.class);
-
-        Predicate startPredicate = (start != null) ? cb.greaterThanOrEqualTo(hit.get("timestamp"), start) : cb.greaterThanOrEqualTo(hit.get("timestamp"), LocalDateTime.now());
-        Predicate endPredicate = (end != null) ? cb.lessThanOrEqualTo(hit.get("timestamp"), end) : cb.lessThanOrEqualTo(hit.get("timestamp"), LocalDateTime.now());
-        Predicate uniquePredicate = unique ? hit.get("uri").in(grayList).not() : cb.conjunction();
-
-        cq.where(
-                cb.and(
-                        startPredicate,
-                        endPredicate,
-                        uniquePredicate
-                )
-        );
-
-        if (uris != null && !uris.isEmpty()) {
-            Predicate uriPredicate = hit.get("uri").in(uris);
-            cq.where(
-                    cb.and(
-                            startPredicate,
-                            endPredicate,
-                            uniquePredicate,
-                            uriPredicate
-                    )
-            );
+        if (unique) {
+            if (uris.isEmpty()) {
+                return hitRepository.findStatsByTimeStampBetweenAndUriInAndUniqueWhereUniqueTrue(start, end);
+            } else {
+                return hitRepository.findStatsByTimeStampBetweenAndUriInAndUniqueWhereUniqueTrue(start, end, uris);
+            }
+        } else {
+            if (uris.isEmpty()) {
+                return hitRepository.findStatsByTimeStampBetweenAndUriInAndUniqueWhereUniqueFalse(start, end);
+            } else {
+                return hitRepository.findStatsByTimeStampBetweenAndUriInAndUniqueWhereUniqueFalse(start, end, uris);
+            }
         }
-
-        TypedQuery<Hit> typedQuery = entityManager.createQuery(cq);
-        return HitMapper.toStatsDtoList(typedQuery.getResultList());
     }
 }

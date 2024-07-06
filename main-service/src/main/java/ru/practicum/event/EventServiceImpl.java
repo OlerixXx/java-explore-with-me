@@ -6,10 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import ru.practicum.HitDto;
-import ru.practicum.StatisticsClient;
 import ru.practicum.category.CategoryRepository;
-import ru.practicum.category.model.Category;
 import ru.practicum.event.dto.request.EventDto;
 import ru.practicum.event.dto.response.EventFullDto;
 import ru.practicum.event.dto.response.EventShortDto;
@@ -36,7 +33,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
