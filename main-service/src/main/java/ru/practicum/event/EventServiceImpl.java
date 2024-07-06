@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import ru.practicum.HitDto;
+import ru.practicum.StatisticsClient;
 import ru.practicum.category.CategoryRepository;
 import ru.practicum.category.model.Category;
 import ru.practicum.event.dto.request.EventDto;
@@ -65,24 +67,28 @@ public class EventServiceImpl implements EventService {
         if (!userRepository.userExists(userId) || !Objects.equals(eventOld.getInitiator().getId(), userId)) {
             throw new NoSuchElementException();
         }
+        if (eventOld.getState() == State.PUBLISHED) {
+           throw new PublishedEventUpdateException("Only pending or canceled events can be changed") ;
+        }
         if (eventDto.getLocation() != null) {
             locationRepository.save(eventDto.getLocation());
         }
-        return EventMapper.toEventFullDto(getEventWithConfirmedRequests(eventRepository.save(EventMapper.toEventUpdate(eventOld, eventDto))));
+        return EventMapper.toEventFullDto(eventRepository.save(EventMapper.toEventUpdate(eventOld, eventDto)));
     }
 
     public List<EventShortDto> getAllUserEvents(Long userId, Pageable makePage) {
         if (!userRepository.userExists(userId)) {
             throw new NoSuchElementException();
         }
-        return EventMapper.toEventShortDtoList(getEventListWithConfirmedRequests(eventRepository.findAllByInitiatorId(userId, makePage)));
+        return EventMapper.toEventShortDtoList(eventRepository.findAllByInitiatorId(userId, makePage));
     }
 
     public EventFullDto getEvent(Long userId, Long eventId) {
         if (!userRepository.userExists(userId)) {
             throw new NoSuchElementException();
         }
-        return EventMapper.toEventFullDto(getEventWithConfirmedRequests(eventRepository.findById(eventId).orElseThrow(NoSuchElementException::new)));
+        return EventMapper.toEventFullDto(eventRepository.findById(eventId).orElseThrow(NoSuchElementException::new));
+
     }
 
     public EventFullDto adminUpdate(EventDto eventDto, Long eventId) {
@@ -122,7 +128,7 @@ public class EventServiceImpl implements EventService {
         typedQuery.setFirstResult((int) makePage.getOffset());
         typedQuery.setMaxResults(makePage.getPageSize());
         List<Event> result = typedQuery.getResultList();
-        return EventMapper.toEventFullDtoList(getEventListWithConfirmedRequests(result));
+        return EventMapper.toEventFullDtoList(result);
     }
 
     public List<EventShortDto> search(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable, Pageable makePage, Sorted sorted) {
@@ -136,7 +142,7 @@ public class EventServiceImpl implements EventService {
         Predicate paidPredicate = (paid != null) ? cb.equal(event.get("paid"), paid) : cb.conjunction();
         Predicate notNullEventDatePredicate = cb.isNotNull(event.get("eventDate"));
         Predicate rangeStartPredicate = (rangeStart != null) ? cb.greaterThanOrEqualTo(event.get("eventDate"), rangeStart) : cb.greaterThanOrEqualTo(event.get("eventDate"), LocalDateTime.now());
-        Predicate rangeEndPredicate = (rangeStart != null) ? cb.lessThanOrEqualTo(event.get("eventDate"), rangeEnd) : cb.conjunction();
+        Predicate rangeEndPredicate = (rangeEnd != null) ? cb.lessThanOrEqualTo(event.get("eventDate"), rangeEnd) : cb.conjunction();
         Predicate availablePredicate = onlyAvailable ? cb.lessThan(event.get("confirmed_requests"), event.get("participant_limit")) : cb.conjunction();
 
         cq.where(
@@ -170,15 +176,14 @@ public class EventServiceImpl implements EventService {
         typedQuery.setFirstResult((int) makePage.getOffset());
         typedQuery.setMaxResults(makePage.getPageSize());
         List<Event> result = typedQuery.getResultList();
-        return EventMapper.toEventShortDtoList(getEventListWithConfirmedRequests(result));
+        return EventMapper.toEventShortDtoList(result);
     }
 
     @Transactional
     public EventFullDto getPublicEvent(Long eventId) {
         Event event = eventRepository.findById(eventId).orElseThrow(NoSuchElementException::new);
         if (event.getState().equals(State.PUBLISHED)) {
-            eventRepository.incrementViews(eventId); // Надо инкрементировать в stats сервисе, чтобы запрос был с уникального IP
-            return EventMapper.toEventFullDto(getEventWithConfirmedRequests(event));
+            return EventMapper.toEventFullDto(event);
         } else {
             throw new NoSuchElementException();
         }
@@ -190,7 +195,7 @@ public class EventServiceImpl implements EventService {
             throw new NoSuchElementException();
         }
         if (event.getConfirmedRequests() >= event.getParticipantLimit()) {
-            throw new ParticipationRequestLimitException("Достигнут лимит участников в событии!");
+            throw new ParticipationRequestLimitException("The participant limit has been reached!");
         }
 
         if (event.getParticipantLimit() == 0 || !event.isRequestModeration()) {
@@ -202,6 +207,7 @@ public class EventServiceImpl implements EventService {
                     throw new StatusRequestException("Статус должен быть только PENDING");
                 }
                 if (event.getConfirmedRequests() < event.getParticipantLimit()) {
+                    eventRepository.incrementRequests(eventId);
                     request.setStatus(Status.CONFIRMED);
                 } else {
                     request.setStatus(Status.REJECTED);
@@ -221,14 +227,7 @@ public class EventServiceImpl implements EventService {
         return ParticipationRequestMapper.toParticipationRequestDtoList(participationRequestRepository.findAllByEventId(eventId));
     }
 
-    private List<Event> getEventListWithConfirmedRequests(List<Event> eventList) {
-        return eventList.stream()
-                .peek(event -> event.setConfirmedRequests(participationRequestRepository.getCountEventRequests(event.getId(), Status.CONFIRMED.toString())))
-                .collect(Collectors.toList());
-    }
-
-    private Event getEventWithConfirmedRequests(Event event) {
-        event.setConfirmedRequests(participationRequestRepository.getCountEventRequests(event.getId(), Status.CONFIRMED.toString()));
-        return event;
+    private Event getEventWithViews() {
+        return null;
     }
 }

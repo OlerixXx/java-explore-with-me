@@ -131,6 +131,18 @@ public class ErrorHandler {
         );
     }
 
+    @ExceptionHandler(ParticipationRequestLimitException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handlePublishEventUpdate(ParticipationRequestLimitException e) {
+        return new ApiError(
+                HttpStatus.CONFLICT.toString(),
+                "For the requested operation the conditions are not met.",
+                e.getMessage(),
+                Collections.singletonList(e.getMessage()),
+                LocalDateTime.now()
+        );
+    }
+
 //    @ExceptionHandler
 //    @ResponseStatus(HttpStatus.BAD_REQUEST)
 //    public ErrorResponse handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {

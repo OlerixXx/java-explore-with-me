@@ -24,13 +24,13 @@ public class ParticipationRequestMapper {
         );
     }
 
-    public static ParticipationRequest toParticipationRequest(User user, Event event) {
+    public static ParticipationRequest toParticipationRequest(User user, Event event, Status status) {
         return new ParticipationRequest(
                 null,
                 LocalDateTime.now(),
                 event,
                 user,
-                !event.isRequestModeration() || event.getParticipantLimit() == 0 ? Status.CONFIRMED : Status.PENDING
+                status
         );
     }
 

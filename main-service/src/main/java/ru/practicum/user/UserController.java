@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.convert.ConvertIntegerArray;
 import ru.practicum.convert.ConvertPageable;
 import ru.practicum.user.dto.request.UserDto;
 import ru.practicum.user.model.User;
@@ -36,9 +37,10 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getAll(@RequestParam(required = false, defaultValue = "0") Integer from,
+    public List<User> getAll(@RequestParam(required = false, defaultValue = "") Integer[] ids,
+                             @RequestParam(required = false, defaultValue = "0") Integer from,
                              @RequestParam(required = false, defaultValue = "10") Integer size) {
-        return userService.getAll(ConvertPageable.toMakePage(from, size));
+        return userService.getAll(ConvertIntegerArray.toLongList(ids), ConvertPageable.toMakePage(from, size));
     }
 
     @DeleteMapping("/{userId}")

@@ -26,7 +26,7 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     public CompilationShortDto getCompilationsById(Long compId) {
-        return null;
+        return CompilationMapper.toCompilationShortDto(compilationRepository.findById(compId).orElseThrow(NoSuchFieldError::new));
     }
 
     @Transactional

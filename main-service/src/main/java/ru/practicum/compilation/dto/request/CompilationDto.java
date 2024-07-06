@@ -15,6 +15,6 @@ public class CompilationDto {
     List<Long> events;
     Boolean pinned;
     @Size(min = 1, max = 50, groups = {Create.class, Update.class})
-    @NotBlank(message = "Заголовок не может быть пустым", groups = {Create.class, Update.class})
+    @NotBlank(message = "Заголовок не может быть пустым", groups = Create.class)
     String title;
 }

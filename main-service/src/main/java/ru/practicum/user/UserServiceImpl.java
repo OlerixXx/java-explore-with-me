@@ -35,8 +35,12 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
     }
 
-    public List<User> getAll(Pageable page) {
-        return userRepository.findAll(page).toList();
+    public List<User> getAll(List<Long> ids, Pageable page) {
+        if (ids.isEmpty()) {
+            return userRepository.findAll(page).toList();
+        } else {
+            return userRepository.findAllByIdIn(ids, page);
+        }
     }
 
     @Transactional

@@ -14,7 +14,7 @@ public interface UserService {
 
     User getUser(Long userId);
 
-    List<User> getAll(Pageable page);
+    List<User> getAll(List<Long> ids, Pageable page);
 
     void remove(Long userId);
 }

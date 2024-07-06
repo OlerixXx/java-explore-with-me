@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.event.EventRepository;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.State;
+import ru.practicum.event.model.Status;
 import ru.practicum.exception.custom.ExecuteException;
 import ru.practicum.request.dto.response.ParticipationRequestDto;
 import ru.practicum.request.mapper.ParticipationRequestMapper;
@@ -29,10 +30,17 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     public ParticipationRequestDto create(Long userId, Long eventId) {
         Event event = eventRepository.findById(eventId).orElseThrow(NoSuchElementException::new);
         User user = userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
-        if (event.getState() != State.PUBLISHED || Objects.equals(event.getInitiator().getId(), userId) || event.getConfirmedRequests() >= event.getParticipantLimit()) {
+        ParticipationRequest participationRequest;
+
+        if (event.getState() != State.PUBLISHED || Objects.equals(event.getInitiator().getId(), userId) || (event.getParticipantLimit() != 0 && event.getConfirmedRequests() >= event.getParticipantLimit())) {
             throw new ExecuteException("Could not execute statement");
         }
-        ParticipationRequest participationRequest = participationRequestRepository.save(ParticipationRequestMapper.toParticipationRequest(user, event));
+        if (event.getParticipantLimit() == 0 || !event.isRequestModeration()) {
+            eventRepository.incrementRequests(eventId);
+            participationRequest = participationRequestRepository.save(ParticipationRequestMapper.toParticipationRequest(user, event, Status.CONFIRMED));
+        } else {
+            participationRequest = participationRequestRepository.save(ParticipationRequestMapper.toParticipationRequest(user, event, Status.PENDING));
+        }
         return ParticipationRequestMapper.toParticipationRequestDto(participationRequest);
     }
 
@@ -42,7 +50,8 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         if (!Objects.equals(request.getRequester().getId(), userId)) {
             throw new NoSuchElementException();
         }
-        participationRequestRepository.delete(request);
+        request.setStatus(Status.CANCELED);
+        participationRequestRepository.cancelRequest(requestId);
         return ParticipationRequestMapper.toParticipationRequestDto(request);
     }
 
