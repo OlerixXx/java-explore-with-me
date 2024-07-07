@@ -3,7 +3,6 @@ package ru.practicum.request.dto.response;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.event.model.State;
 import ru.practicum.event.model.Status;
 
 import java.time.LocalDateTime;

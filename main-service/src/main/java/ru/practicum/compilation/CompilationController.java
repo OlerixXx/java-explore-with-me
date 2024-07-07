@@ -18,7 +18,7 @@ public class CompilationController {
     private final CompilationService compilationService;
 
     @GetMapping("/compilations")
-    public List<CompilationShortDto> getAllCompilations(@RequestParam(defaultValue = "true") boolean pinned,
+    public List<CompilationShortDto> getAllCompilations(@RequestParam(required = false) Boolean pinned,
                                                      @RequestParam(required = false, defaultValue = "0") Integer from,
                                                      @RequestParam(required = false, defaultValue = "10") Integer size) {
         return compilationService.getAllCompilations(pinned, ConvertPageable.toMakePage(from, size));

@@ -1,7 +1,6 @@
 package ru.practicum.converter;
 
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.format.FormatterRegistry;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;

@@ -11,7 +11,10 @@ import ru.practicum.event.dto.request.EventDto;
 import ru.practicum.event.dto.response.EventFullDto;
 import ru.practicum.event.dto.response.EventShortDto;
 import ru.practicum.event.mapper.EventMapper;
-import ru.practicum.event.model.*;
+import ru.practicum.event.model.Event;
+import ru.practicum.event.model.Sorted;
+import ru.practicum.event.model.State;
+import ru.practicum.event.model.Status;
 import ru.practicum.exception.custom.ParticipationRequestLimitException;
 import ru.practicum.exception.custom.PublishedEventUpdateException;
 import ru.practicum.exception.custom.StatusRequestException;
@@ -32,7 +35,10 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -84,7 +90,6 @@ public class EventServiceImpl implements EventService {
             throw new NoSuchElementException();
         }
         return EventMapper.toEventFullDto(eventRepository.findById(eventId).orElseThrow(NoSuchElementException::new));
-
     }
 
     public EventFullDto adminUpdate(EventDto eventDto, Long eventId) {
@@ -132,8 +137,11 @@ public class EventServiceImpl implements EventService {
         CriteriaQuery<Event> cq = cb.createQuery(Event.class);
         Root<Event> event = cq.from(Event.class);
 
-        Predicate annotationPredicate = StringUtils.hasText(text) ? cb.like(cb.lower(event.get("annotation")), "%" + text.toLowerCase() + "%") : cb.conjunction();
-        Predicate descriptionPredicate = StringUtils.hasText(text) ? cb.like(cb.lower(event.get("description")), "%" + text.toLowerCase() + "%") : cb.conjunction();
+        log.info("Переданы параметры search: \ntext: {}, \ncategories: {}, \npaid: {}, \nrangeStart: {}, \nrangeEnd: {}, \nonlyAvailable: {}, \nmakePage: {}, \n sorted: {}", text, categories, paid, rangeStart, rangeEnd, onlyAvailable, makePage, sorted);
+        Predicate annotationPredicate = cb.like(cb.lower(event.get("annotation")), "%" + text.toLowerCase() + "%");
+        Predicate descriptionPredicate = cb.like(cb.lower(event.get("description")), "%" + text.toLowerCase() + "%");
+        Predicate finalPredicate = StringUtils.hasText(text) ? cb.or(annotationPredicate, descriptionPredicate) : cb.conjunction();
+
         Predicate categoriesPredicate = !categories.isEmpty() ? event.get("category").get("id").in(categories) : cb.conjunction();
         Predicate paidPredicate = (paid != null) ? cb.equal(event.get("paid"), paid) : cb.conjunction();
         Predicate notNullEventDatePredicate = cb.isNotNull(event.get("eventDate"));
@@ -143,8 +151,7 @@ public class EventServiceImpl implements EventService {
 
         cq.where(
                 cb.and(
-                        annotationPredicate,
-                        descriptionPredicate,
+                        finalPredicate,
                         categoriesPredicate,
                         paidPredicate,
                         rangeStartPredicate,
@@ -202,7 +209,7 @@ public class EventServiceImpl implements EventService {
                 if (request.getStatus().equals(Status.CONFIRMED) || request.getStatus().equals(Status.REJECTED)) {
                     throw new StatusRequestException("Статус должен быть только PENDING");
                 }
-                if (event.getConfirmedRequests() < event.getParticipantLimit()) {
+                if (event.getConfirmedRequests() < event.getParticipantLimit() && requestDtoList.getStatus() == Status.CONFIRMED) {
                     eventRepository.incrementRequests(eventId);
                     request.setStatus(Status.CONFIRMED);
                 } else {

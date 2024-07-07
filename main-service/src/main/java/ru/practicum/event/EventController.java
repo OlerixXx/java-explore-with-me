@@ -2,20 +2,19 @@ package ru.practicum.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.convert.ConvertIntegerArray;
+import ru.practicum.convert.ConvertPageable;
 import ru.practicum.event.dto.request.EventDto;
 import ru.practicum.event.dto.response.EventFullDto;
 import ru.practicum.event.dto.response.EventShortDto;
 import ru.practicum.event.model.Sorted;
 import ru.practicum.event.model.State;
-import ru.practicum.convert.ConvertPageable;
-import ru.practicum.request.dto.response.ParticipationRequestDto;
 import ru.practicum.request.dto.request.ParticipationRequestDtoList;
+import ru.practicum.request.dto.response.ParticipationRequestDto;
 import ru.practicum.request.dto.response.ParticipationRequestDtoUpdate;
 import ru.practicum.validated.Create;
 import ru.practicum.validated.Update;
@@ -51,7 +50,7 @@ public class EventController {
     }
 
     @GetMapping("/events")
-    public List<EventShortDto> search(@RequestParam(required = false) String text,
+    public List<EventShortDto> search(@RequestParam(required = false, defaultValue = "") String text,
                                       @RequestParam(required = false, defaultValue = "") Integer[] categories,
                                       @RequestParam(required = false) Boolean paid,
                                       @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,

@@ -9,7 +9,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.converter.ConvertStringArray;
 
-import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 

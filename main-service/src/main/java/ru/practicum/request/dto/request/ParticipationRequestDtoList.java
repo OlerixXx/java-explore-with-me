@@ -2,7 +2,6 @@ package ru.practicum.request.dto.request;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.UniqueElements;
-import ru.practicum.event.model.State;
 import ru.practicum.event.model.Status;
 
 import javax.validation.constraints.NotNull;

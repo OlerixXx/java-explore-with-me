@@ -1,15 +1,11 @@
 package ru.practicum.event.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 import ru.practicum.event.model.Location;
-import ru.practicum.event.model.State;
 import ru.practicum.validated.Create;
 import ru.practicum.validated.Update;
 import ru.practicum.validator.FutureOrTwoHoursLater;
 
-import javax.annotation.Nonnegative;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface CompilationService {
 
-    List<CompilationShortDto> getAllCompilations(boolean pinned, Pageable makePage);
+    List<CompilationShortDto> getAllCompilations(Boolean pinned, Pageable makePage);
 
     CompilationShortDto getCompilationsById(Long compId);
 

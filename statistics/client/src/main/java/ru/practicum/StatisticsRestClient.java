@@ -8,8 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -19,7 +17,7 @@ import java.util.Map;
 @Service
 @Slf4j
 public class StatisticsRestClient extends RestTemplate {
-    @Value("http://localhost:9090")
+    @Value("${stats-server.url}")
     private String ewmStatsServiceUrl;
 
     private String dateTimeFormat = "yyyy-MM-dd HH:mm:ss";
@@ -31,9 +29,9 @@ public class StatisticsRestClient extends RestTemplate {
                 ip,
                 LocalDateTime.now().format(DateTimeFormatter.ofPattern(dateTimeFormat))
         );
-
-        postForLocation(ewmStatsServiceUrl + "/hit", hitDto);
         log.info("Создан запрос: POST {}/hit body={}", ewmStatsServiceUrl, hitDto);
+        postForLocation(ewmStatsServiceUrl + "/hit", hitDto);
+
     }
 
     public ResponseEntity<List<StatsDto>> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {

@@ -8,6 +8,12 @@ services:
       - POSTGRES_DB=stats-db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+#      - TZ=Europe/Moscow
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d stats-db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   stats-server:
     build: statistics/service
@@ -21,16 +27,12 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/stats-db
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
-
-  ewm-db:
-    image: postgres:15.3-alpine
-    container_name: ewm-db
-    ports:
-      - "6541:5432"
-    environment:
-      - POSTGRES_DB=ewm-db
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+#      - TZ=Europe/Moscow
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9090" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   ewm-service:
     build: main-service
@@ -45,4 +47,26 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm-db
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
-      - STATS_SERVER_URL=https://stats-server:9090
+      - STATS_SERVER_URL=http://stats-server:9090
+#      - TZ=Europe/Moscow
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  ewm-db:
+    image: postgres:15.3-alpine
+    container_name: ewm-db
+    ports:
+      - "6541:5432"
+    environment:
+      - POSTGRES_DB=ewm-db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+#      - TZ=Europe/Moscow
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d ewm-db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5

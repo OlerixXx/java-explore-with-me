@@ -1,7 +1,6 @@
 package ru.practicum.request.mapper;
 
 import ru.practicum.event.model.Event;
-import ru.practicum.event.model.State;
 import ru.practicum.event.model.Status;
 import ru.practicum.request.dto.response.ParticipationRequestDto;
 import ru.practicum.request.dto.response.ParticipationRequestDtoUpdate;
