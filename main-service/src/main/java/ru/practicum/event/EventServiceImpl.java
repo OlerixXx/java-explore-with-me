@@ -70,7 +70,7 @@ public class EventServiceImpl implements EventService {
             throw new NoSuchElementException();
         }
         if (eventOld.getState() == State.PUBLISHED) {
-           throw new PublishedEventUpdateException("Only pending or canceled events can be changed") ;
+           throw new PublishedEventUpdateException("Only pending or canceled events can be changed");
         }
         if (eventDto.getLocation() != null) {
             locationRepository.save(eventDto.getLocation());

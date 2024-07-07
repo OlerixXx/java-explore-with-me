@@ -14,9 +14,6 @@ public interface ParticipationRequestRepository extends JpaRepository<Participat
 
     List<ParticipationRequest> findAllByRequesterId(Long userId);
 
-    @Query(value = "SELECT COUNT(*) FROM participation_requests WHERE event_id = ?1 AND status = ?2", nativeQuery = true)
-    Long getCountEventRequests(Long event_id, String status);
-
     @Modifying
     @Transactional
     @Query("UPDATE ParticipationRequest r SET r.status = 'CANCELED' WHERE r.id = ?1")

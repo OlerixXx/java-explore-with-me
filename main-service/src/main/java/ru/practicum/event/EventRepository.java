@@ -20,8 +20,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     List<Event> findAllByInitiatorIdInAndStateInAndCategoryIdInAndEventDateBetween(List<Long> users, List<State> states, List<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Pageable makePage);
 
-    List<Event> findAllByAnnotationContainingAndDescriptionContainingAndCategoryIdInAndPaidAndEventDateBetween(String annotation, String description, List<Long> categories, boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd );
-
     @Query(value = "select e from Event e where (e.annotation like %?1% or e.description like %?2%) and e.category.id in ?3 and e.paid = ?4 and e.eventDate is not null and e.eventDate >= ?5 and e.eventDate <= ?6")
     List<Event> searchEventByFiltersAll(String annotation, String description, List<Long> categories, boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, Pageable page);
 
@@ -34,7 +32,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Modifying
     @Transactional
     @Query("UPDATE Event e SET e.views = ?2 WHERE e.id = ?1")
-    void incrementViews(Long eventId, Long Hits);
+    void incrementViews(Long eventId, Long hits);
 
     @Modifying
     @Transactional
