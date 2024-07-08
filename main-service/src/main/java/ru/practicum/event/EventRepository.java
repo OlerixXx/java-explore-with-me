@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.event.model.Event;
-import ru.practicum.event.model.State;
 
 import java.time.LocalDateTime;
 import java.util.List;
