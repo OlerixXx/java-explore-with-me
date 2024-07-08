@@ -16,5 +16,5 @@ public interface CategoryService {
 
     List<Category> getAll(Pageable makePage);
 
-    Category getCategory(Long catId);
+    Category getById(Long catId);
 }

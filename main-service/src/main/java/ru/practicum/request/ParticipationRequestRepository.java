@@ -16,6 +16,6 @@ public interface ParticipationRequestRepository extends JpaRepository<Participat
 
     @Modifying
     @Transactional
-    @Query("UPDATE ParticipationRequest r SET r.status = 'CANCELED' WHERE r.id = ?1")
+    @Query("UPDATE ParticipationRequest r SET r.status = 'CANCELED' WHERE r.id = :requestId")
     void cancelRequest(Long requestId);
 }

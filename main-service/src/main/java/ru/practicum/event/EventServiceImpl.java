@@ -78,14 +78,14 @@ public class EventServiceImpl implements EventService {
         return EventMapper.toEventFullDto(eventRepository.save(EventMapper.toEventUpdate(eventOld, eventDto)));
     }
 
-    public List<EventShortDto> getAllUserEvents(Long userId, Pageable makePage) {
+    public List<EventShortDto> getAllByUserId(Long userId, Pageable makePage) {
         if (!userRepository.userExists(userId)) {
             throw new NoSuchElementException();
         }
         return EventMapper.toEventShortDtoList(eventRepository.findAllByInitiatorId(userId, makePage));
     }
 
-    public EventFullDto getEvent(Long userId, Long eventId) {
+    public EventFullDto getById(Long userId, Long eventId) {
         if (!userRepository.userExists(userId)) {
             throw new NoSuchElementException();
         }
@@ -228,9 +228,5 @@ public class EventServiceImpl implements EventService {
             throw new NoSuchElementException();
         }
         return ParticipationRequestMapper.toParticipationRequestDtoList(participationRequestRepository.findAllByEventId(eventId));
-    }
-
-    private Event getEventWithViews() {
-        return null;
     }
 }

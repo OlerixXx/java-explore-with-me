@@ -13,29 +13,27 @@ import java.util.List;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-    @Query(value = "SELECT EXISTS(SELECT 1 FROM events WHERE id=?1)", nativeQuery = true)
+    @Query(value = "SELECT EXISTS(SELECT 1 FROM events WHERE id=:userId)", nativeQuery = true)
     boolean eventExists(Long userId);
 
     List<Event> findAllByInitiatorId(Long userId, Pageable page);
 
-    List<Event> findAllByInitiatorIdInAndStateInAndCategoryIdInAndEventDateBetween(List<Long> users, List<State> states, List<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Pageable makePage);
-
-    @Query(value = "select e from Event e where (e.annotation like %?1% or e.description like %?2%) and e.category.id in ?3 and e.paid = ?4 and e.eventDate is not null and e.eventDate >= ?5 and e.eventDate <= ?6")
+    @Query(value = "select e from Event e where (e.annotation like %:annotation% or e.description like %:description%) and e.category.id in :categories and e.paid = :paid and e.eventDate is not null and e.eventDate >= :rangeStart and e.eventDate <= :rangeEnd")
     List<Event> searchEventByFiltersAll(String annotation, String description, List<Long> categories, boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, Pageable page);
 
-    @Query(value = "select e from Event e where (e.annotation like %?1% or e.description like %?2%) and e.category.id in ?3 and e.paid = ?4 and e.eventDate >= ?5 and e.eventDate is not null and e.eventDate <= ?6 and e.confirmedRequests <= e.participantLimit")
+    @Query(value = "select e from Event e where (e.annotation like %:annotation% or e.description like %:description%) and e.category.id in :categories and e.paid = :paid and e.eventDate >= :rangeStart and e.eventDate is not null and e.eventDate <= :rangeEnd and e.confirmedRequests <= e.participantLimit")
     List<Event> searchEventByFiltersOnlyAvailable(String annotation, String description, List<Long> categories, boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, Pageable page);
 
-    @Query("select e.initiator.id from Event e where e.id = ?1")
+    @Query("select e.initiator.id from Event e where e.id = :eventId")
     Long findInitiatorByEventId(Long eventId);
 
     @Modifying
     @Transactional
-    @Query("UPDATE Event e SET e.views = ?2 WHERE e.id = ?1")
+    @Query("UPDATE Event e SET e.views = :hits WHERE e.id = :eventId")
     void incrementViews(Long eventId, Long hits);
 
     @Modifying
     @Transactional
-    @Query("UPDATE Event e SET e.confirmedRequests = e.confirmedRequests + 1 WHERE e.id = ?1")
+    @Query("UPDATE Event e SET e.confirmedRequests = e.confirmedRequests + 1 WHERE e.id = :eventId")
     void incrementRequests(Long eventId);
 }

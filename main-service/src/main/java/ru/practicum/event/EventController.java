@@ -41,12 +41,12 @@ public class EventController {
 
     @GetMapping("/users/{userId}/events")
     public List<EventShortDto> getAllFromUser(@PathVariable Long userId, @RequestParam(defaultValue = "0") Integer from, @RequestParam(defaultValue = "10") Integer size) {
-        return eventService.getAllUserEvents(userId, ConvertPageable.toMakePage(from, size));
+        return eventService.getAllByUserId(userId, ConvertPageable.toMakePage(from, size));
     }
 
     @GetMapping("/users/{userId}/events/{eventId}")
-    public EventFullDto getEvent(@PathVariable Long userId, @PathVariable Long eventId) {
-        return eventService.getEvent(userId, eventId);
+    public EventFullDto getById(@PathVariable Long userId, @PathVariable Long eventId) {
+        return eventService.getById(userId, eventId);
     }
 
     @GetMapping("/events")

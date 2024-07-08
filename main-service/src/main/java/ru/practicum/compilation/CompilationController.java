@@ -18,15 +18,15 @@ public class CompilationController {
     private final CompilationService compilationService;
 
     @GetMapping("/compilations")
-    public List<CompilationShortDto> getAllCompilations(@RequestParam(required = false) Boolean pinned,
+    public List<CompilationShortDto> getAll(@RequestParam(required = false) Boolean pinned,
                                                      @RequestParam(required = false, defaultValue = "0") Integer from,
                                                      @RequestParam(required = false, defaultValue = "10") Integer size) {
-        return compilationService.getAllCompilations(pinned, ConvertPageable.toMakePage(from, size));
+        return compilationService.getAll(pinned, ConvertPageable.toMakePage(from, size));
     }
 
     @GetMapping("/compilations/{compId}")
-    public CompilationShortDto getCompilationsById(@PathVariable Long compId) {
-        return compilationService.getCompilationsById(compId);
+    public CompilationShortDto getById(@PathVariable Long compId) {
+        return compilationService.getById(compId);
     }
 
     @PostMapping("/admin/compilations")

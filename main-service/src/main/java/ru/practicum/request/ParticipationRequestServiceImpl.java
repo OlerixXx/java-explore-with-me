@@ -56,7 +56,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     }
 
     @Override
-    public List<ParticipationRequestDto> getAllRequests(Long userId) {
+    public List<ParticipationRequestDto> getAll(Long userId) {
         return ParticipationRequestMapper.toParticipationRequestDtoList(participationRequestRepository.findAllByRequesterId(userId));
     }
 }

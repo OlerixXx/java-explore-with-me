@@ -8,7 +8,7 @@ import ru.practicum.user.model.User;
 import java.util.List;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    @Query(value = "SELECT EXISTS(SELECT 1 FROM users WHERE id=?1)", nativeQuery = true)
+    @Query(value = "SELECT EXISTS(SELECT 1 FROM users WHERE id = :userId)", nativeQuery = true)
     boolean userExists(Long userId);
 
     List<User> findAllByIdIn(List<Long> ids, Pageable page);

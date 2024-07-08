@@ -37,7 +37,7 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findAll(makePage).toList();
     }
 
-    public Category getCategory(Long catId) {
+    public Category getById(Long catId) {
         return categoryRepository.findById(catId).orElseThrow(NoSuchElementException::new);
     }
 }

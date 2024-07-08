@@ -19,9 +19,9 @@ public interface EventService {
 
     EventFullDto update(EventDto eventDto, Long userId, Long eventId);
 
-    List<EventShortDto> getAllUserEvents(Long userId, Pageable makePage);
+    List<EventShortDto> getAllByUserId(Long userId, Pageable makePage);
 
-    EventFullDto getEvent(Long userId, Long eventId);
+    EventFullDto getById(Long userId, Long eventId);
 
     ParticipationRequestDtoUpdate updateRequest(ParticipationRequestDtoList requestDtoList, Long userId, Long eventId);
 

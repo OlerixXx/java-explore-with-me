@@ -1,8 +1,6 @@
 package ru.practicum.request.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.Status;
 import ru.practicum.user.model.User;
@@ -12,12 +10,15 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "participation_requests")
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ParticipationRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     Long id;
     @Column(name = "created")
     LocalDateTime created;

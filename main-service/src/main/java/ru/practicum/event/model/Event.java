@@ -1,8 +1,6 @@
 package ru.practicum.event.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.practicum.category.model.Category;
 import ru.practicum.user.model.User;
 
@@ -11,12 +9,15 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "events", schema = "public")
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     Long id;
     @Column(name = "annotation", nullable = false)
     String annotation;

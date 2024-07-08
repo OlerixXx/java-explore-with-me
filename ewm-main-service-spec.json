@@ -864,7 +864,7 @@
     "/categories/{catId}": {
       "get": {
         "description": "В случае, если категории с заданным id не найдено, возвращает статус код 404",
-        "operationId": "getCategory",
+        "operationId": "getById",
         "parameters": [
           {
             "description": "id категории",

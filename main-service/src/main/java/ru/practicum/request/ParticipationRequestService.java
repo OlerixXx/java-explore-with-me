@@ -10,5 +10,5 @@ public interface ParticipationRequestService {
 
     ParticipationRequestDto cancelRequest(Long userId, Long requestId);
 
-    List<ParticipationRequestDto> getAllRequests(Long userId);
+    List<ParticipationRequestDto> getAll(Long userId);
 }

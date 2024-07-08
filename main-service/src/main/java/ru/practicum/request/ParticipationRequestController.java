@@ -25,7 +25,7 @@ public class ParticipationRequestController {
     }
 
     @GetMapping("/users/{userId}/requests")
-    public List<ParticipationRequestDto> getAllRequests(@PathVariable Long userId) {
-        return participationRequestService.getAllRequests(userId);
+    public List<ParticipationRequestDto> getAll(@PathVariable Long userId) {
+        return participationRequestService.getAll(userId);
     }
 }

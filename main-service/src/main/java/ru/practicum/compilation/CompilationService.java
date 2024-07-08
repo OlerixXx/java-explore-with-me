@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface CompilationService {
 
-    List<CompilationShortDto> getAllCompilations(Boolean pinned, Pageable makePage);
+    List<CompilationShortDto> getAll(Boolean pinned, Pageable makePage);
 
-    CompilationShortDto getCompilationsById(Long compId);
+    CompilationShortDto getById(Long compId);
 
     CompilationShortDto create(CompilationDto compilationDto);
 

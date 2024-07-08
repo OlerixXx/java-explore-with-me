@@ -13,8 +13,8 @@ public class UserMapper {
     public static User toUser(UserDto userDto) {
         return new User(
                 null,
-                userDto.getName() != null ? userDto.getName() : null,
-                userDto.getEmail() != null ? userDto.getEmail() : null,
+                userDto.getName(),
+                userDto.getEmail(),
                 LocalDateTime.now()
         );
     }

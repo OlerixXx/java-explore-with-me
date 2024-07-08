@@ -21,7 +21,7 @@ public class CompilationServiceImpl implements CompilationService {
     private final EventRepository eventRepository;
     private final CompilationRepository compilationRepository;
 
-    public List<CompilationShortDto> getAllCompilations(Boolean pinned, Pageable makePage) {
+    public List<CompilationShortDto> getAll(Boolean pinned, Pageable makePage) {
         if (pinned == null) {
             return CompilationMapper.toCompilationShortDtoList(compilationRepository.findAll(makePage).toList());
         } else {
@@ -29,7 +29,7 @@ public class CompilationServiceImpl implements CompilationService {
         }
     }
 
-    public CompilationShortDto getCompilationsById(Long compId) {
+    public CompilationShortDto getById(Long compId) {
         return CompilationMapper.toCompilationShortDto(compilationRepository.findById(compId).orElseThrow(NoSuchFieldError::new));
     }
 

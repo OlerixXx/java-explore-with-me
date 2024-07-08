@@ -34,8 +34,8 @@ public class RequestInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception exception) throws Exception {
         if (request.getRequestURI().startsWith("/events/")) {
-            LocalDateTime start = LocalDateTime.of(2000, 1, 1, 0, 0);
-            LocalDateTime end = LocalDateTime.of(2100, 1, 1, 0, 0);
+            LocalDateTime start = LocalDateTime.now().minusYears(10);
+            LocalDateTime end = LocalDateTime.now().plusYears(100);
             List<StatsDto> statsDtoList = statisticsClient.getStats(start, end, List.of(request.getRequestURI()), true).getBody();
             eventRepository.incrementViews(Long.parseLong(request.getRequestURI().replaceFirst("/events/", "")), statsDtoList.get(0).getHits());
         }
