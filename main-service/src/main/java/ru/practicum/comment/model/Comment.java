@@ -18,15 +18,15 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    Long id;
+    private Long id;
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
-    Event event;
+    private Event event;
     @ManyToOne
     @JoinColumn(name = "commentator_id", nullable = false)
-    User commentator;
+    private User commentator;
     @Column(name = "publication_date", nullable = false)
-    LocalDateTime publicationDate;
+    private LocalDateTime publicationDate;
     @Column(name = "text", nullable = false)
-    String text;
+    private String text;
 }

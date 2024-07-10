@@ -15,9 +15,9 @@ public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    Long id;
+    private Long id;
     @Column(name = "lat", nullable = false)
-    Float lat;
+    private Float lat;
     @Column(name = "lon", nullable = false)
-    Float lon;
+    private Float lon;
 }

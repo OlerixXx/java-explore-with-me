@@ -19,16 +19,16 @@ public class ParticipationRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    Long id;
+    private Long id;
     @Column(name = "created")
-    LocalDateTime created;
+    private LocalDateTime created;
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
-    Event event;
+    private Event event;
     @ManyToOne
     @JoinColumn(name = "requester_id", nullable = false)
-    User requester;
+    private User requester;
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
-    Status status;
+    private Status status;
 }

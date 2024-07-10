@@ -17,16 +17,16 @@ public class Compilation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    Long id;
+    private Long id;
     @ManyToMany
     @JoinTable(
             name = "compilation_event",
             joinColumns = @JoinColumn(name = "compilation_id"),
             inverseJoinColumns = @JoinColumn(name = "event_id")
     )
-    List<Event> eventList;
+    private List<Event> eventList;
     @Column(name = "pinned")
-    boolean pinned;
+    private boolean pinned;
     @Column(name = "title")
-    String title;
+    private String title;
 }
