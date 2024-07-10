@@ -12,8 +12,8 @@ import java.util.List;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-    @Query(value = "SELECT EXISTS(SELECT 1 FROM events WHERE id=:userId)", nativeQuery = true)
-    boolean eventExists(Long userId);
+    @Query(value = "SELECT EXISTS(SELECT 1 FROM events WHERE id=:eventId)", nativeQuery = true)
+    boolean eventExists(Long eventId);
 
     List<Event> findAllByInitiatorId(Long userId, Pageable page);
 

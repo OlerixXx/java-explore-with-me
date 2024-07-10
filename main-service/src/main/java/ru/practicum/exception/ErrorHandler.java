@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.postgresql.util.PSQLException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -24,6 +25,18 @@ public class ErrorHandler {
     @ExceptionHandler()
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleMethodArgumentTypeMismatch(MissingServletRequestParameterException e) {
+        return new ApiError(
+                HttpStatus.BAD_REQUEST.toString(),
+                "Incorrectly made request.",
+                e.getMessage(),
+                Collections.singletonList(e.getMessage()),
+                LocalDateTime.now()
+        );
+    }
+
+    @ExceptionHandler()
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleMethodArgumentTypeMismatch(MethodArgumentNotValidException e) {
         return new ApiError(
                 HttpStatus.BAD_REQUEST.toString(),
                 "Incorrectly made request.",
