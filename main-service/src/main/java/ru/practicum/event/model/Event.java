@@ -18,39 +18,39 @@ public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    Long id;
+    private Long id;
     @Column(name = "annotation", nullable = false)
-    String annotation;
+    private String annotation;
     @ManyToOne
     @JoinColumn(name = "category_id")
-    Category category;
+    private Category category;
     @Column(name = "confirmed_requests")
-    Long confirmedRequests;
+    private Long confirmedRequests;
     @Column(name = "created_on", nullable = false)
-    LocalDateTime createdOn;
+    private LocalDateTime createdOn;
     @Column(name = "description", nullable = false)
-    String description;
+    private String description;
     @Column(name = "event_date", nullable = false)
-    LocalDateTime eventDate;
+    private LocalDateTime eventDate;
     @ManyToOne
     @JoinColumn(name = "initiator_id", nullable = false)
-    User initiator;
+    private User initiator;
     @ManyToOne
     @JoinColumn(name = "location_id", nullable = false)
-    Location location;
+    private Location location;
     @Column(name = "paid", nullable = false)
-    boolean paid;
+    private boolean paid;
     @Column(name = "participant_limit", nullable = false)
-    Integer participantLimit;
+    private Integer participantLimit;
     @Column(name = "published_on")
-    LocalDateTime publishedOn;
+    private LocalDateTime publishedOn;
     @Column(name = "request_moderation", nullable = false)
     boolean requestModeration;
     @Column(name = "state", nullable = false)
     @Enumerated(EnumType.STRING)
-    State state;
+    private State state;
     @Column(name = "title", nullable = false)
-    String title;
+    private String title;
     @Column(name = "views")
-    Long views;
+    private Long views;
 }

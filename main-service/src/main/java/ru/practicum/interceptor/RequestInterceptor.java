@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Component
@@ -20,6 +21,7 @@ import java.util.List;
 public class RequestInterceptor implements HandlerInterceptor {
     private final StatisticsRestClient statisticsClient;
     private final EventRepository eventRepository;
+    private static final Pattern EVENT_URL_PATTERN = Pattern.compile("^/events/\\d+$");
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -33,7 +35,7 @@ public class RequestInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception exception) throws Exception {
-        if (request.getRequestURI().startsWith("/events/")) {
+        if (EVENT_URL_PATTERN.matcher(request.getRequestURI()).matches()) {
             LocalDateTime start = LocalDateTime.now().minusYears(10);
             LocalDateTime end = LocalDateTime.now().plusYears(100);
             List<StatsDto> statsDtoList = statisticsClient.getStats(start, end, List.of(request.getRequestURI()), true).getBody();

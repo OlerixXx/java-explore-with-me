@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS locations CASCADE;
 DROP TABLE IF EXISTS categories CASCADE;
 DROP TABLE IF EXISTS events CASCADE;
 DROP TABLE IF EXISTS participation_requests CASCADE;
+DROP TABLE IF EXISTS comments CASCADE;
 DROP TABLE IF EXISTS compilations CASCADE;
 DROP TABLE IF EXISTS compilation_event CASCADE;
 CREATE TABLE IF NOT EXISTS users (id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, name varchar(250), email varchar(254) UNIQUE, registration_date TIMESTAMP WITHOUT TIME ZONE );
@@ -10,6 +11,7 @@ CREATE TABLE IF NOT EXISTS locations (id BIGINT GENERATED ALWAYS AS IDENTITY PRI
 CREATE TABLE IF NOT EXISTS categories (id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, name varchar(250) UNIQUE );
 CREATE TABLE IF NOT EXISTS events (id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, annotation varchar(2000), category_id BIGINT, confirmed_requests BIGINT, created_on TIMESTAMP WITHOUT TIME ZONE, description varchar(7000), event_date TIMESTAMP WITHOUT TIME ZONE, initiator_id BIGINT, location_id BIGINT, paid BOOLEAN, participant_limit INT, published_on TIMESTAMP WITHOUT TIME ZONE, request_moderation BOOLEAN, state varchar(100), title varchar(120), views BIGINT, CONSTRAINT fk_events_to_categories FOREIGN KEY(category_id) REFERENCES categories(id), CONSTRAINT fk_events_to_users FOREIGN KEY(initiator_id) REFERENCES users(id) ON DELETE CASCADE, CONSTRAINT fk_events_to_locations FOREIGN KEY(location_id) REFERENCES locations(id) ON DELETE CASCADE );
 CREATE TABLE IF NOT EXISTS participation_requests (id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, created TIMESTAMP WITHOUT TIME ZONE, event_id BIGINT, requester_id BIGINT, status varchar(100), CONSTRAINT fk_participation_requests_to_events FOREIGN KEY(event_id) REFERENCES events(id) ON DELETE CASCADE, CONSTRAINT fk_participation_requests_to_users FOREIGN KEY(requester_id) REFERENCES users(id) ON DELETE CASCADE, CONSTRAINT uq_event_requester UNIQUE (event_id, requester_id) );
+CREATE TABLE IF NOT EXISTS comments (id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, event_id BIGINT, commentator_id BIGINT, publication_date TIMESTAMP WITHOUT TIME ZONE, text varchar(3000), CONSTRAINT fk_comments_to_events FOREIGN KEY(event_id) REFERENCES events(id) ON DELETE CASCADE, CONSTRAINT fk_comments_to_users FOREIGN KEY(commentator_id) REFERENCES users(id) ON DELETE CASCADE );
 CREATE TABLE IF NOT EXISTS compilations (id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, event_id BIGINT, pinned BOOLEAN, title varchar(50), CONSTRAINT fk_compilations_to_events FOREIGN KEY(event_id) REFERENCES events(id) ON DELETE CASCADE );
 CREATE TABLE IF NOT EXISTS compilation_event (compilation_id BIGINT, event_id BIGINT, PRIMARY KEY (compilation_id, event_id), CONSTRAINT fk_compilation FOREIGN KEY(compilation_id) REFERENCES compilations(id) ON DELETE CASCADE, CONSTRAINT fk_event FOREIGN KEY(event_id) REFERENCES events(id) ON DELETE CASCADE );
 -- ALTER SEQUENCE public.events_id_seq MINVALUE 0;

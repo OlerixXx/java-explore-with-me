@@ -1,34 +1,32 @@
-package ru.practicum.request.model;
+package ru.practicum.comment.model;
 
 import lombok.*;
 import ru.practicum.event.model.Event;
-import ru.practicum.event.model.Status;
 import ru.practicum.user.model.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "participation_requests")
+@Table(name = "comments", schema = "public")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class ParticipationRequest {
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long id;
-    @Column(name = "created")
-    private LocalDateTime created;
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
     @ManyToOne
-    @JoinColumn(name = "requester_id", nullable = false)
-    private User requester;
-    @Column(name = "status", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Status status;
+    @JoinColumn(name = "commentator_id", nullable = false)
+    private User commentator;
+    @Column(name = "publication_date", nullable = false)
+    private LocalDateTime publicationDate;
+    @Column(name = "text", nullable = false)
+    private String text;
 }

@@ -12,7 +12,7 @@ public interface UserService {
 
     User update(UserDto userDto, Long userId);
 
-    User getUser(Long userId);
+    User getById(Long userId);
 
     List<User> getAll(List<Long> ids, Pageable page);
 
